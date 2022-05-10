@@ -17,13 +17,28 @@ class ClassicModel extends Conection
     }
 
 
+    function countEmployees(){
+        $res = 0;
+        try {
+            $sql = "SELECT COUNT(*) FROM employees";
+            $sql = "SELECT COUNT(*) FROM employees";
+            $stmt = $this->conexion->query($sql);
+            $res = $stmt->fetchColumn();
+        } catch (Exception | PDOException $e) {
+            echo 'Fallo el ejecutar la consulta: ' . $e->getMessage();
+        }
+        return $res;
+    }
+
+
     /**
      * Guarda toda la información de la tabla "employees" en formato array de objetos de tipo "Employee"
      */
-    function getAllEmployees()
+    function getAllEmployees($comienzo, $longitud)
     {
         try {
-            $consulta = "SELECT * FROM employees order by 4 desc";
+            // $consulta = "SELECT * FROM employees order by 4 desc";
+            $consulta = "SELECT * FROM employees LIMIT $comienzo,$longitud";
             $resultado = $this->conexion->query($consulta);
             if (!$resultado) {
                 print "<p class=\"aviso\">Error en la consulta. SQLSTATE[{$this->conexion->errorCode()}]: {$this->conexion->errorInfo()[2]}</p>\n";
@@ -270,12 +285,13 @@ class ClassicModel extends Conection
         return $retorno;
     }
 
+
     /**
      * Dibuja las filas de la tabla de empleados
      */
-    function drawEmployeesList()
+    function drawEmployeesList($comienzo, $longitud)
     {
-        $this->getAllEmployees();
+        $this->getAllEmployees($comienzo, $longitud);
         $output = "";
         foreach ($this->employees as $employee) {
             $officeCity = $this->getEmployeeOffice($employee->getOfficeCode());
